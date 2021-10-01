@@ -31,8 +31,12 @@ class WhatSender:
                 rows = csv.DictReader(openfile, delimiter=';', quoting=csv.QUOTE_NONE)
                 for row in rows:
                     self.contacts.append(dict(row))
+
+            if self.contacts == []:
+                print("No existe listado de contactos para enviar mensaje.")
+                return None
         else:
-            print("No existe el archivo")
+            print("No existe el archivo {}".format(csvfile))
 
 
     def PassContactList(self, contactlist=[]):
@@ -53,7 +57,7 @@ class WhatSender:
 
     def SendMessage(self, message):
         if self.contacts == []:
-            print( 'No existe listado de contactos para enviar mensaje' )
+            # print("No existe listado de contactos para enviar mensaje.")
             return None
 
         # localizamos el cuadro de búsqueda de contacto
@@ -64,14 +68,15 @@ class WhatSender:
                     self.__multiline(message.replace('{nombre}', contact['name']))
                     time.sleep(3)
                 else:
-                    print( "    No existe el contacto: {} ({})".format(contact['full_name'], contact['phone']) )
+                    print( "    No existe el contacto: {} ({})" \
+                           .format(contact['full_name'], contact['phone']) )
         else:
-            print( "No existe el cuadro de búsqueda de contactos" )
+            print("No existe el cuadro de búsqueda de contactos.")
 
 
     def SendImage(self, message):
         if self.contacts == []:
-            print( 'No existe listado de contactos para enviar mensaje' )
+            # print("No existe listado de contactos para enviar mensaje.")
             return None
 
         # localizamos el cuadro de búsqueda de contacto
@@ -88,9 +93,10 @@ class WhatSender:
                     except Exception as e: 
                         print( "        Error: {}".format(e) )
                 else:
-                    print( "    No existe el contacto: {} ({})".format(contact['full_name'], contact['phone']) )
+                    print( "    No existe el contacto: {} ({})" \
+                           .format(contact['full_name'], contact['phone']) )
         else:
-            print( "No existe el cuadro de búsqueda de contactos" )
+            print("No existe el cuadro de búsqueda de contactos.")
 
 
     def Close(self):
@@ -138,9 +144,11 @@ class WhatSender:
         obj.click()
 
     def __multiline(self, message):
-        print( 'multilinea' )
+        print("multilinea")
         for line in message.split("\n"):
             ActionChains(self.driver).send_keys(line).perform()
-            ActionChains(self.driver).key_down(Keys.SHIFT).key_down(Keys.ENTER).key_up(Keys.SHIFT).key_up(Keys.ENTER).perform()
-
+            ActionChains(self.driver).key_down(Keys.SHIFT) \
+                                     .key_down(Keys.ENTER) \
+                                     .key_up(Keys.SHIFT) \
+                                     .key_up(Keys.ENTER).perform()
         ActionChains(self.driver).send_keys(Keys.RETURN).perform()
