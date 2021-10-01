@@ -1,25 +1,29 @@
+import csv, os, time
+
 from selenium import webdriver
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.common.exceptions import NoSuchElementException
 
-import csv, os, pandas, time
-
 
 class WhatSender:
-    def __init__(self, chromedriver="/home/externo/Desarrollo/python/whatsapp/chromedriver"):
+    def __init__(self, chromedriver="/usr/bin/chromedriver"):
         self.contacts = []
-        options = webdriver.ChromeOptions()
-        options.add_argument('lang=es')
-        options.add_argument('--window-size=800,700')
-        self.driver = webdriver.Chrome(executable_path = chromedriver, options=options)
+        self.chromedriver = chromedriver
+        self.options = webdriver.ChromeOptions()
+        self.options.add_argument('lang=es')
+        self.options.add_argument('--window-size=800,700')
+
+
+    def Open(self):
+        self.driver = webdriver.Chrome(executable_path=self.chromedriver, options=self.options)
         self.driver.get('https://web.whatsapp.com/')
         wait = WebDriverWait(self.driver, 20)
         input(str("Lea el código QR\nCuando aparezca la ventana de WhatsApp pulse [enter] para continuar ... "))
 
 
-    def ContactList(self, csvfile):
+    def ContactList(self, csvfile='listado.csv'):
         """Pasamos el archivo CSV con la información de contactos"""
         if os.path.isfile(csvfile):
             with open(csvfile, mode='r', encoding='utf8') as openfile:
@@ -28,7 +32,7 @@ class WhatSender:
                 for row in rows:
                     self.contacts.append(dict(row))
         else:
-            print ("No existe el archivo")
+            print("No existe el archivo")
 
 
     def PassContactList(self, contactlist=[]):
@@ -93,6 +97,7 @@ class WhatSender:
         self.driver.quit()
 
 
+    # staticmethod (decorador)
     def __person_box(self):
         # cuadro de búsqueda de contacto
         try:
